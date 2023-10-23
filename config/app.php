@@ -5,6 +5,11 @@ use Illuminate\Support\ServiceProvider;
 
 return [
 
+    'demo' => [
+        'email' => 'admin@admin.com',
+        'password' => 'secret',
+    ],
+
     /*
     |--------------------------------------------------------------------------
     | Application Name
