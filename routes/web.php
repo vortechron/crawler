@@ -1,6 +1,10 @@
 <?php
 
+use App\Models\Product;
+use Illuminate\Support\Str;
+use App\Notifications\CrawlCompleted;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Notification;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,4 +19,11 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
+});
+
+Route::get('/tinker', function () {
+    $settings = app(\App\Settings\CrawlerSettings::class);
+    Notification::route('mail', [
+        $settings->notification_email => 'Hourglass',
+    ])->notify(new CrawlCompleted());
 });

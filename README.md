@@ -1,13 +1,34 @@
-# Vortechron simple crawler
+# Simple crawler
 
 ## Local Development
 
-### Links
+### Requirements
 
--   **Your Application** http://localhost
--   **Preview Emails via Mailpit** http://localhost:8025
--   **Laravel Telescope** http://localhost/telescope
--   **Laravel Horizon** http://localhost/horizon
+-   [Docker](https://www.docker.com/)
+-   [Docker Compose](https://docs.docker.com/compose/)
+
+### Tech Stack
+
+-   [Laravel](https://laravel.com/)
+-   [Tailwind CSS](https://tailwindcss.com/)
+-   [Alpine.js](https://alpinejs.dev/)
+-   [Livewire](https://laravel-livewire.com/)
+-   [Filamentphp](https://filamentphp.com/)
+-   [PHPUnit](https://phpunit.de/)
+
+### Install
+
+```shell
+./initialize
+```
+
+Running this script will:
+
+-   install composer dependencies
+-   install npm dependencies
+-   create a .env file
+-   generate an application key
+-   build the docker containers
 
 ### Start the development server
 
