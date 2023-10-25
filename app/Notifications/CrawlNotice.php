@@ -7,15 +7,16 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class CrawlCompleted extends Notification
+class CrawlNotice extends Notification
 {
     use Queueable;
 
     /**
      * Create a new notification instance.
      */
-    public function __construct()
-    {
+    public function __construct(
+        public string $message
+    ) {
         //
     }
 
@@ -35,8 +36,8 @@ class CrawlCompleted extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->line('Crawl completed successfully.')
-            ->action('View Products', url('/admin/products'));
+            ->line('Crawl notice.')
+            ->line($this->message);
     }
 
     /**

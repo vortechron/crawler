@@ -2,34 +2,31 @@
 
 namespace App\Crawlers;
 
-use App\Components\DomParser;
-use DOMXPath;
 use Throwable;
-use DOMDocument;
-use App\Models\Product;
 use Filament\Forms\Form;
 use Illuminate\Bus\Batch;
 use Illuminate\Support\Str;
+use App\Components\DomParser;
 use App\Jobs\HourglassProducts;
-use App\Notifications\CrawlCompleted;
+use App\Notifications\CrawlFailed;
+use App\Notifications\CrawlNotice;
 use App\Settings\HourglassSettings;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Log;
 use Spatie\LaravelSettings\Settings;
+use App\Notifications\CrawlCompleted;
 use Filament\Forms\Components\Select;
-use Illuminate\Support\Facades\Notification;
 
 class Hourglass extends BaseCrawler
 {
     protected array $productUrls = [];
     protected array $products = [];
 
-    public function crawl(string $url): void
+    protected function crawl(string $url): void
     {
         $links = DomParser::load($url)->dom()->getElementsByTagName('a');
 
         $catalogUrls = [];
-
         foreach ($this->settings()->brands as $brand) {
             foreach ($links as $link) {
                 $href = $link->getAttribute('href');
@@ -41,7 +38,14 @@ class Hourglass extends BaseCrawler
             }
         }
 
-        foreach (collect($catalogUrls)->unique()->all() as $catalogUrl) {
+        $catalogs = collect($catalogUrls)->unique();
+
+        if ($catalogs->isEmpty()) {
+            $this->notifier()->notify(new CrawlNotice('No catalogs found.'));
+            return;
+        }
+
+        foreach ($catalogs->all() as $catalogUrl) {
             $this->crawlCatalog($catalogUrl);
         }
 
@@ -70,10 +74,11 @@ class Hourglass extends BaseCrawler
 
     public function scrapeProducts(): void
     {
-        $chunks = collect($this->productUrls)->unique()
+        $chunks = collect($this->productUrls)
             ->map(function ($productUrl) {
                 return str_replace('http://', 'https://', $productUrl);
             })
+            ->unique()
             ->chunk(20);
 
         $jobs = [];
@@ -82,15 +87,15 @@ class Hourglass extends BaseCrawler
         }
 
         if (count($jobs) == 0) {
+            $this->notifier()->notify(new CrawlNotice('No products found.'));
             return;
         }
 
         Bus::batch($jobs)->catch(function (Batch $batch, Throwable $e) {
             Log::error($e->getMessage());
+            static::notifier()->notify(new CrawlFailed());
         })->finally(function (Batch $batch) {
-            Notification::route('mail', [
-                $this->settings->notification_email => 'Hourglass',
-            ])->notify(new CrawlCompleted());
+            static::notifier()->notify(new CrawlCompleted());
         })->dispatch();
     }
 

@@ -16,6 +16,8 @@ class ListProducts extends ListRecords
 {
     protected static string $resource = ProductResource::class;
 
+    public static ?string $title = 'Crawled Products';
+
     protected function getHeaderActions(): array
     {
         return [
@@ -54,7 +56,7 @@ class ListProducts extends ListRecords
                 $strategyClass = $crawlerSettings->strategy;
 
                 if (empty($strategyClass)) {
-                    Notification::make()
+                    return Notification::make()
                         ->title('Please select a strategy first.')
                         ->warning()
                         ->actions([
@@ -63,8 +65,6 @@ class ListProducts extends ListRecords
                                 ->url(CrawlerSettingsPage::getUrl())
                         ])
                         ->send();
-
-                    return;
                 }
 
                 dispatch(app($strategyClass));

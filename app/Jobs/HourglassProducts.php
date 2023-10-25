@@ -43,8 +43,9 @@ class HourglassProducts implements ShouldQueue
                 }
 
                 $data = [
-                    'name' => $dom->getElementById("watch_name")?->textContent,
-                    'sku' => $parser->query('//*[@data-class="prd-name"]')?->item(0)?->textContent,
+                    'name' => Str::of($dom->getElementById("watch_name")?->textContent)->trim()->toString(),
+                    'sku' => Str::of($parser->query('//*[@data-class="prd-name"]')?->item(0)?->textContent)
+                        ->trim()->toString(),
                     'description' => Str::of($description)->trim()->toString(),
                     'price' => 0, // price is loaded thru js, requires headless browser
                     'stock' => 1,
@@ -52,9 +53,11 @@ class HourglassProducts implements ShouldQueue
 
                 $meta = [];
                 $specsList = $parser->query('//ul[@class="specs"]/li');
+
                 foreach ($specsList as $spec) {
-                    $label = trim($parser->query('./div[@class="specs-lbl"]', $spec)->item(0)->textContent);
-                    $value = trim($parser->query('./div[@class="specs-val"]/p', $spec)->item(0)->textContent);
+                    $label = Str::of(trim($parser->query('./div[@class="specs-lbl"]', $spec)->item(0)?->textContent))
+                        ->replace(":", "")->lower()->toString();
+                    $value = trim($parser->query('./div[@class="specs-val"]/p', $spec)->item(0)?->textContent);
 
                     $meta[$label] = $value;
                 }

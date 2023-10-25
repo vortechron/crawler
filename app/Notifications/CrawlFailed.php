@@ -7,7 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class CrawlCompleted extends Notification
+class CrawlFailed extends Notification
 {
     use Queueable;
 
@@ -35,8 +35,8 @@ class CrawlCompleted extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->line('Crawl completed successfully.')
-            ->action('View Products', url('/admin/products'));
+            ->line('Opps, Crawl failed.')
+            ->line('Please check your configuration or contact your administrator.');
     }
 
     /**
