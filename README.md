@@ -48,6 +48,9 @@ Running this script will:
 
 ### Run Tests
 
+-   We only test the crawler
+-   Others are already tested by the framework/library
+
 ```shell
 ./vendor/bin/sail test
 ```
