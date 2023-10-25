@@ -33,16 +33,21 @@ Running this script will:
 -   create a .env file
 -   generate an application key
 -   build the docker containers
+-   run the database migrations
+-   create initial user
 
 ### Start the development server
 
 ```shell
 ./vendor/bin/sail up
+
+# for background process
+./vendor/bin/sail artisan horizon
 ```
 
 -   navigate to http://localhost/admin
--   username: test@test.com
--   password: test
+-   username: admin@admin.com
+-   password: secret
 
 ### Build frontend assets
 
@@ -53,7 +58,7 @@ Running this script will:
 ### Run Tests
 
 -   We only test the crawler
--   Others are already tested by the framework/library
+-   Other tools are already tested by the framework/library
 
 ```shell
 ./vendor/bin/sail test

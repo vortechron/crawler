@@ -97,6 +97,8 @@ fi
 echo "Database ready!"
 echo './vendor/bin/sail artisan migrate'
 ./vendor/bin/sail artisan migrate
+echo 'Creating initial user'
+./vendor/bin/sail artisan make:filament-user --name=Admin --email=admin@admin.com --password=secret
 echo '';
 echo -e '┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━';
 echo -e '┃ 🚀 [1mSetup frontend[0m';
